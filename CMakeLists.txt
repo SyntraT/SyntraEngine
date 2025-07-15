@@ -8,19 +8,35 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_TOOLCHAIN_FILE "vcpkg/scripts/buildsystems/vcpkg.cmake"
       CACHE STRING "Vcpkg toolchain file")
 
-# Prefer clang if available
-if(NOT MSVC)
-  find_program(CLANGXX clang++)
-  if(CLANGXX)
-    set(CMAKE_CXX_COMPILER ${CLANGXX} CACHE FILEPATH "C++ compiler")
-  endif()
+
+# Check for clang++ in non visual studio generator environments
+find_program(CLANGXX_PATH clang++)
+
+if(CLANGXX_PATH)
+    message(STATUS "Found Clang++ at: ${CLANGXX_PATH}")
+    set(CMAKE_CXX_COMPILER ${CLANGXX_PATH})
+else()
+    # Check for MSVC compiler cl.exe
+    find_program(MSVC_PATH cl)
+
+    if(MSVC_PATH)
+        message(STATUS "Found MSVC (cl.exe) at: ${MSVC_PATH}")
+        set(CMAKE_CXX_COMPILER ${MSVC_PATH})
+    else()
+        # If neither compiler is found, abort
+        message(FATAL_ERROR "Neither Clang++ nor MSVC (cl.exe) were found on this system.")
+    endif()
 endif()
 
+# Now declare project after compiler is selected
+project(SyntraEngine LANGUAGES CXX)
 
+# Confirm final selected compiler
+message(STATUS "Using C++ compiler: ${CMAKE_CXX_COMPILER}")
 
 # Detect Vulkan SDK via environment variable
 if(NOT DEFINED ENV{VULKAN_SDK})
-    message(FATAL_ERROR "VULKAN_SDK environment variable not set. Please install the Vulkan SDK and set VULKAN_SDK.")
+    message(FATAL_ERROR "VULKAN_SDK environment variable not set. Please install the Vulkan SDK and set VULKAN_SDK environment variable.")
 endif()
 
 message(STATUS "Using Vulkan SDK from: $ENV{VULKAN_SDK}")
