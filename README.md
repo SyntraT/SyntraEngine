@@ -19,17 +19,19 @@ Goals:
 
 ## How to Build
 
-Before building, ensure the following libraries are installed:
+Before building, ensure the following are installed:
 
 - **pip** (Package installer for python) 
 - **Vulkan** (At least v1.3)
 - **OpenGL** (Atleast v3.3)
 - **Cmake** (At least v3.25)
+- **Ninja** (If one Linux/macOs)
+- **Clang/MSVC** compiler that supports C++20
 
 Then clone the codebase and run ModelsDownloader.py and extract models folder into the same directory that ModelsDownloader.py is currently in. Afterward, delete the models.rar file.
 
 ### Install Vcpkg
-1 - Go to repo directory:
+1 - Go to repo directory and run:
 
 ```bash
 git clone https://github.com/microsoft/vcpkg.git
