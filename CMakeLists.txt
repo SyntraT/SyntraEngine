@@ -42,7 +42,7 @@ find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(volk CONFIG REQUIRED)
-find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(imgui CONFIG REQUIRED)
@@ -59,7 +59,7 @@ target_link_libraries(SyntraEngine PRIVATE
     glfw
     OpenGL::GL
     volk::volk
-    SDL2::SDL2
+    SDL3::SDL3
     glm::glm
     Vulkan::Vulkan
     imgui::imgui
