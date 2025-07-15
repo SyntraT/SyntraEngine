@@ -110,5 +110,5 @@ target_link_libraries(SyntraEngine PRIVATE
 	${VULKAN_LIBRARY}
 )
 
-# Installation (optional)
+# Installation (optional) 
 install(TARGETS SyntraEngine DESTINATION bin)
