@@ -2,6 +2,10 @@
 *.d
 
 
+#Data files like mesh and textures etc.
+/models/
+
+
 # Output executable folder
 /x64/
 
