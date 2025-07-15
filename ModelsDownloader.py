@@ -18,7 +18,7 @@ url = f'https://drive.google.com/uc?id={file_id}'
 
 # Destination file path (same folder as this script)
 current_dir = os.getcwd()
-output_path = os.path.join(current_dir, 'downloaded_file.rar')
+output_path = os.path.join(current_dir, 'models.rar')
 
 # Download the file
 gdown.download(url, output_path, quiet=False)
