@@ -1,7 +1,5 @@
 # Syntra Engine
 
-![sample.cpp](extra/sample.png)
-
 Syntra Engine is a lightweight, User Friendly, Beta (Work in progress) 3D game engine built with OpenGL. It’s designed to be optimized, modular, and easy to integrate into custom projects.
 
 Goals:
