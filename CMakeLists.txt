@@ -16,6 +16,30 @@ if(NOT MSVC)
   endif()
 endif()
 
+
+
+# Detect Vulkan SDK via environment variable
+if(NOT DEFINED ENV{VULKAN_SDK})
+    message(FATAL_ERROR "VULKAN_SDK environment variable not set. Please install the Vulkan SDK and set VULKAN_SDK.")
+endif()
+
+message(STATUS "Using Vulkan SDK from: $ENV{VULKAN_SDK}")
+
+# Set include and library paths based on platform
+set(VULKAN_INCLUDE_DIR "$ENV{VULKAN_SDK}/Include")
+
+if(WIN32)
+    set(VULKAN_LIBRARY "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
+elseif(APPLE)
+    set(VULKAN_LIBRARY "$ENV{VULKAN_SDK}/lib/libvulkan.dylib")
+elseif(UNIX)
+    set(VULKAN_LIBRARY "$ENV{VULKAN_SDK}/lib/libvulkan.so")
+else()
+    message(FATAL_ERROR "Unsupported platform.")
+endif()
+
+
+
 # Source files
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "include/*.h" "include/*.hpp")
@@ -25,12 +49,6 @@ add_executable(SyntraEngine ${SRC_FILES} ${HEADER_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/src" PREFIX "src" FILES ${SRC_FILES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/include" PREFIX "include" FILES ${HEADER_FILES})
 
-# Include directories
-target_include_directories(SyntraEngine
-    PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
 
 # Dependencies via vcpkg
 find_package(fmt CONFIG REQUIRED)
@@ -41,11 +59,20 @@ find_package(OpenGL REQUIRED)
 find_package(volk CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
-find_package(Vulkan REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(vk-bootstrap CONFIG REQUIRED)
 find_package(VulkanMemoryAllocator CONFIG REQUIRED)
 find_package(Bullet CONFIG REQUIRED)
+
+
+
+# Include directories
+target_include_directories(SyntraEngine
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+		${VULKAN_INCLUDE_DIR}
+)
 
 
 # Link libraries to target
@@ -58,13 +85,13 @@ target_link_libraries(SyntraEngine PRIVATE
     volk::volk
     SDL2::SDL2
     glm::glm
-    Vulkan::Vulkan
     imgui::imgui
     vk-bootstrap::vk-bootstrap
     GPUOpen::VulkanMemoryAllocator
 	BulletDynamics
     BulletCollision
     LinearMath
+	${VULKAN_LIBRARY}
 )
 
 # Installation (optional)
