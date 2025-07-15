@@ -32,7 +32,6 @@ target_include_directories(SyntraEngine
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
-		${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/x64-windows/include
 )
 
 # Dependencies via vcpkg
