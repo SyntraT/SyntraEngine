@@ -19,7 +19,6 @@ Goals:
 
 ## How to Build
 
-**Required Libraries**
 Before building, ensure the following libraries are installed:
 
 - **pip** (Package installer for python) 
