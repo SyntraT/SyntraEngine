@@ -26,7 +26,7 @@ Before building, ensure the following are installed:
 - **OpenGL** (Atleast v3.3)
 - **Cmake** (At least v3.25)
 - **Ninja** (If one Linux/macOs)
-- Clang/MSVC compiler that supports C++20
+- **Clang/MSVC** compiler that supports C++20
 
 Then clone the codebase and run ModelsDownloader.py and extract models folder into the same directory that ModelsDownloader.py is currently in. Afterward, delete the models.rar file.
 
