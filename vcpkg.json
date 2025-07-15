@@ -1,0 +1,22 @@
+{
+  "name": "syntraengine",
+  "version": "0.1.0",
+  "dependencies": [
+    "assimp",
+    "glad",
+    "glfw3",
+    "volk",
+    
+	{
+      "name": "sdl3",
+      "features": [ "vulkan" ]
+    },
+	
+    "glm",
+    "fmt",
+    "imgui",
+    "stb",
+    "vk-bootstrap",
+    "vulkan-memory-allocator"
+  ]
+}

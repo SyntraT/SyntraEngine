@@ -1,6 +1,111 @@
 # Prerequisites
 *.d
 
+
+# Output executable folder
+/x64/
+
+# Possible lib outputs of project
+/SyntraEngine.dir/
+
+# vcpkg related folders/files
+vcpkg/
+
+
+# CMake generated build directories
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+
+# Visual Studio generated files
+*.sln
+*.vcxproj
+*.vcxproj.*
+*.pdb
+*.idb
+*.ipch
+*.aps
+*.ncb
+*.user
+*.opensdf
+*.sdf
+*.cache
+*.tlog
+*.log
+*.dbmdl
+*.vs/
+
+# macOS specific files
+.DS_Store
+
+# Windows thumbnails
+Thumbs.db
+
+# vcpkg build trees and installed packages (if using classic mode)
+vcpkg_installed/
+buildtrees/
+packages/
+downloads/
+
+# vcpkg integration files (if not wanting local toolchain integration artifacts)
+vcpkg*.log
+
+# vcpkg binary cache (if enabled)
+.vcpkg-root/.vcpkg-root
+.vcpkg-root/buildtrees/
+.vcpkg-root/packages/
+.vcpkg-root/downloads/
+.vcpkg-root/.vcpkg-root
+.vcpkg-root/vcpkg_installed/
+
+# CMake presets' build folders (if using out-of-source build dirs)
+build/
+build-*/
+out/
+out-*/
+
+# CTest and CPack files
+CTestTestfile.cmake
+CTestCostData.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+
+# CLion / JetBrains IDE files
+.idea/
+
+# VS Code workspace settings (optional)
+.vscode/
+
+# Logs, temporary files
+*.log
+*.tmp
+*.bak
+
+# Backup files
+*~
+*.swp
+
+# Stb or header-only libraries locally copied (if any)
+thirdparty/
+
+# Cache / dependency generated files
+compile_commands.json
+
+# Environment files (optional)
+.env
+.env.*
+
+# Ninja build files
+.ninja*
+build.ninja
+
+# Optional: if using CMakePresets and want to ignore local cache
+CMakePresets.json.user
+
+
+
 # Compiled Object files
 *.slo
 *.lo
