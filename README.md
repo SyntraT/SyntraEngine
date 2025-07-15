@@ -31,7 +31,7 @@ Before building, ensure the following are installed:
 Then clone the codebase and run ModelsDownloader.py and extract models folder into the same directory that ModelsDownloader.py is currently in. Afterward, delete the models.rar file.
 
 ### Install Vcpkg
-1 - Go to repo directory:
+1 - Go to repo directory and run:
 
 ```bash
 git clone https://github.com/microsoft/vcpkg.git
