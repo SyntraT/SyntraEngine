@@ -8,15 +8,19 @@
     "volk",
     
 	{
-      "name": "sdl3",
+      "name": "sdl2",
       "features": [ "vulkan" ]
     },
-	
+
+	{
+	  "name" : "imgui",
+	  "features":["glfw-binding", "vulkan-binding", "opengl3-binding", "sdl2-binding"]
+	},
     "glm",
     "fmt",
-    "imgui",
     "stb",
     "vk-bootstrap",
+	"bullet3",
     "vulkan-memory-allocator"
   ]
 }

@@ -32,6 +32,7 @@ target_include_directories(SyntraEngine
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+		${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/x64-windows/include
 )
 
 # Dependencies via vcpkg
@@ -41,12 +42,14 @@ find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(volk CONFIG REQUIRED)
-find_package(SDL3 CONFIG REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(Vulkan REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(vk-bootstrap CONFIG REQUIRED)
 find_package(VulkanMemoryAllocator CONFIG REQUIRED)
+find_package(Bullet CONFIG REQUIRED)
+
 
 # Link libraries to target
 target_link_libraries(SyntraEngine PRIVATE
@@ -56,12 +59,15 @@ target_link_libraries(SyntraEngine PRIVATE
     glfw
     OpenGL::GL
     volk::volk
-    SDL3::SDL3
+    SDL2::SDL2
     glm::glm
     Vulkan::Vulkan
     imgui::imgui
     vk-bootstrap::vk-bootstrap
     GPUOpen::VulkanMemoryAllocator
+	BulletDynamics
+    BulletCollision
+    LinearMath
 )
 
 # Installation (optional)
