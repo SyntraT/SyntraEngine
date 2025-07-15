@@ -17,7 +17,7 @@ Goals:
   - ~~Bullet Support~~ (IN PROGRESS)
     - PhysX Support
 
-## Manual Build
+## How to Build
 
 **Required Libraries**
 Before building, ensure the following libraries are installed:
@@ -44,7 +44,7 @@ On linux and macOs:
 ./vcpkg/bootstrap-vcpkg.sh
 ```
 
-Building:
+### Building the project:
 
 ### Mac OS
 
