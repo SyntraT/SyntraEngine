@@ -44,7 +44,7 @@ On linux and macOs:
 ./vcpkg/bootstrap-vcpkg.sh
 ```
 
-### Building the project:
+### Building the project
 
 ### Mac OS
 
