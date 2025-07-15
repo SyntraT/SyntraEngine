@@ -5,6 +5,8 @@
 #Data files like mesh and textures etc.
 /models/
 
+# Config files
+*.ini
 
 # Output executable folder
 /x64/
