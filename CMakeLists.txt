@@ -17,6 +17,8 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/vcpkg/scripts/buildsystems/v
 
 
 # Source files
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/**/*.cpp")
+file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "include/**/*.h" "include/**/*.hpp")
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS "src/*.cpp")
 file(GLOB_RECURSE HEADER_FILES CONFIGURE_DEPENDS "include/*.h" "include/*.hpp")
 
@@ -59,7 +61,7 @@ target_link_libraries(SyntraEngine PRIVATE
     glfw
     OpenGL::GL
     volk::volk
-	volk::volk_headers
+	Vulkan::Vulkan
     SDL3::SDL3
     glm::glm
 	Vulkan::Vulkan
