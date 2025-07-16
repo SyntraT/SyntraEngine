@@ -1,6 +1,4 @@
 
-
-
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanFoundationalElements.hpp"
 #include <VkBootstrap.h>
 

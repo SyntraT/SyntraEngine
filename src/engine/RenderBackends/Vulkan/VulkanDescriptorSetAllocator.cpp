@@ -15,7 +15,7 @@ namespace VRenderer
 		lv_poolCreateInfo.poolSizeCount = static_cast<uint32_t>(l_poolSizes.size());
 		lv_poolCreateInfo.pPoolSizes = l_poolSizes.data();
 		lv_poolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
-		
+
 		VULKAN_CHECK(vkCreateDescriptorPool(l_device, &lv_poolCreateInfo, nullptr, &m_pool));
 	}
 

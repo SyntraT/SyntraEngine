@@ -1,16 +1,15 @@
 
 
-//For now if you want to work with opengl as rendering backend set this to 0
+//For now if you want to work with the opengl as rendering backend comment this out
 #define VULKAN_RENDERER 1
 
 
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 
 
-#ifdef VULKAN_RENDERER 
+
+#if defined(VULKAN_RENDERER)
 
 #include "Syngine/engine/RenderBackends/Vulkan/Renderer.hpp"
 #include "Syngine/engine/RenderBackends/Vulkan/SDL_WindowWrapper.hpp"
@@ -22,7 +21,6 @@
 #include <thread>
 
 #endif
-
 
 
 
@@ -65,6 +63,9 @@
 #include <imgui_impl_opengl3.h>
 
 #endif
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 #ifndef VULKAN_RENDERER
 

@@ -2,9 +2,11 @@
 
 #include "Syngine/engine/RenderBackends/Vulkan/Renderer.hpp"
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanError.hpp"
-#include "Syngine/engine/RenderBackends/Vulkan/VulkanUtils/VulkanUtils.hpp"
+#include "Syngine/engine/RenderBackends/Vulkan/VulkanUtilities/VulkanUtils.hpp"
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanDescriptorSetLayoutFactory.hpp"
 #define VMA_IMPLEMENTATION
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_DYNAMIC_VULKAN_FUNCTIONS 0
 #include <vma/vk_mem_alloc.h>
 #include <cmath>
 #include <limits>
@@ -45,7 +47,7 @@ namespace VRenderer
 
 		//Testing code
 
-		VulkanTexture lv_testTexture = VulkanUtils::GenerateVulkanTexture(m_vmaAlloc, VK_FORMAT_R16G16B16A16_SFLOAT, VkExtent3D{.width = 1024, .height = 1024, .depth = 1}, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_STORAGE_BIT);
+		VulkanTexture lv_testTexture = VulkanUtils::GenerateVulkanTexture(m_vmaAlloc, VK_FORMAT_R16G16B16A16_SFLOAT, VkExtent3D{ .width = 1024, .height = 1024, .depth = 1 }, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_STORAGE_BIT);
 		VulkanTexture lv_testTexture2 = VulkanUtils::GenerateVulkanTexture(m_vmaAlloc, VK_FORMAT_R16G16B16A16_SFLOAT, VkExtent3D{ .width = 1024, .height = 1024, .depth = 1 }, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_STORAGE_BIT);
 
 		const uint32_t lv_cachedTestTextureHandle = m_vulkanResManager.AddVulkanTexture("Test-Image0", std::move(lv_testTexture));
@@ -98,11 +100,11 @@ namespace VRenderer
 
 		m_vulkanResManager.AddVulkanImageView("ComputeImageView0", lv_cachedTextureView);
 		m_vulkanResManager.AddVulkanImageView("ComputeImageView1", lv_cachedTexture2View);
-		
+
 		VkDescriptorImageInfo lv_imageInfo{};
 		lv_imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 		lv_imageInfo.imageView = lv_cachedTextureView;
-		
+
 		VkDescriptorImageInfo lv_imageInfo2{};
 		lv_imageInfo2.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 		lv_imageInfo2.imageView = lv_cachedTexture2View;
@@ -122,13 +124,13 @@ namespace VRenderer
 		lv_writes[1].dstBinding = 0U;
 		lv_writes[1].dstSet = m_testComputeSets[1];
 		lv_writes[1].pImageInfo = &lv_imageInfo2;
-		
+
 		vkUpdateDescriptorSets(m_device, (uint32_t)lv_writes.size(), lv_writes.data(), 0, nullptr);
 
 		VkPipelineLayout lv_computePipelineLayout = VulkanUtils::GenerateVkPipelineLayout(m_device, (uint32_t)lv_ptComputeSetLayout.size(), lv_ptComputeSetLayout);
-		VkShaderModule lv_shaderModule = VulkanUtils::GenerateVkShaderModule("shaders/SPIRV-CompiledShaders/Gradient.spv", m_device);
+		VkShaderModule lv_shaderModule = VulkanUtils::GenerateVkShaderModule("shaders/VulkanShaders/SPIRV-CompiledShaders/Gradient.spv", m_device);
 		VkPipeline lv_computePipeline = VulkanUtils::GenerateComputeVkPipeline(m_device, lv_computePipelineLayout, lv_shaderModule, "main");
-		
+
 		m_vulkanResManager.AddVulkanPipeline("ComputePipeline", lv_computePipeline);
 		m_vulkanResManager.AddVulkanPipelineLayout("ComputePipelineLayout", lv_computePipelineLayout);
 
@@ -150,7 +152,7 @@ namespace VRenderer
 		auto& lv_cmdBuffer = GetCurrentFrameGraphicsCmdBuffer();
 		auto& lv_syncPrimitives = GetCurrentFrameSwapchainPresentSyncPrimitives();
 
-		VULKAN_CHECK(vkWaitForFences(m_device, 1, &lv_syncPrimitives.m_fence, VK_TRUE,std::numeric_limits<uint64_t>::max()));
+		VULKAN_CHECK(vkWaitForFences(m_device, 1, &lv_syncPrimitives.m_fence, VK_TRUE, std::numeric_limits<uint64_t>::max()));
 		vkResetFences(m_device, 1, &lv_syncPrimitives.m_fence);
 		lv_cmdBuffer.ResetBuffer();
 
@@ -168,7 +170,7 @@ namespace VRenderer
 		lv_cmdBuffer.EndRecording();
 
 		VkCommandBufferSubmitInfo lv_cmdBufferSubmitInfo = GenerateVkCommandBufferSubmitInfo(lv_cmdBuffer.m_buffer);
-		
+
 		VkSemaphoreSubmitInfo lv_waitSemaphoreSubmitInfo = GenerateVkSemaphoreSubmitInfo(lv_syncPrimitives.m_acquireImageSemaphore, VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT);
 		VkSemaphoreSubmitInfo lv_signalSemaphoreSubmitInfo = GenerateVkSemaphoreSubmitInfo(lv_syncPrimitives.m_presentSemaphore, VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT);
 
@@ -199,7 +201,7 @@ namespace VRenderer
 	void Renderer::RecordCommands(VkCommandBuffer l_cmd, const uint32_t l_swapchainIndex, const uint32_t l_frameInflightIndex)
 	{
 		using namespace VulkanUtils;
-		
+
 		VulkanTexture& lv_testTexture = m_vulkanResManager.RetrieveVulkanTexture(fmt::format("Test-Image{}", l_frameInflightIndex));
 		VkPipeline lv_computePipeline = m_vulkanResManager.RetrieveVulkanPipeline("ComputePipeline");
 		VkPipelineLayout lv_computePipelineLayout = m_vulkanResManager.RetrieveVulkanPipelineLayout("ComputePipelineLayout");
@@ -209,10 +211,10 @@ namespace VRenderer
 			, m_vulkanSwapchain.m_images[l_swapchainIndex], VK_ACCESS_2_MEMORY_READ_BIT
 			, VK_ACCESS_2_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT
 			, VK_PIPELINE_STAGE_2_TRANSFER_BIT);
-		
+
 		vkCmdBindPipeline(l_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, lv_computePipeline);
 		vkCmdBindDescriptorSets(l_cmd, VK_PIPELINE_BIND_POINT_COMPUTE, lv_computePipelineLayout, 0, 1, &m_testComputeSets[l_frameInflightIndex], 0U, nullptr);
-		vkCmdDispatch(l_cmd, (uint32_t)std::ceilf(lv_testTexture.m_extent.width/16.f), (uint32_t)std::ceilf(lv_testTexture.m_extent.height/16.f), 1U);
+		vkCmdDispatch(l_cmd, (uint32_t)std::ceilf(lv_testTexture.m_extent.width / 16.f), (uint32_t)std::ceilf(lv_testTexture.m_extent.height / 16.f), 1U);
 
 
 		ImageLayoutTransitionCmd(l_cmd, VK_IMAGE_ASPECT_COLOR_BIT
@@ -223,7 +225,7 @@ namespace VRenderer
 		lv_testTexture.m_mipMapImageLayouts[0] = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 
 		auto& lv_swapchainExtent = m_vulkanSwapchain.m_extent;
-		std::array<VkOffset3D, 2> lv_srcRegion{ VkOffset3D{}, VkOffset3D{.x	= (int)lv_testTexture.m_extent.width, .y = (int)lv_testTexture.m_extent.height, .z = 1}};
+		std::array<VkOffset3D, 2> lv_srcRegion{ VkOffset3D{}, VkOffset3D{.x = (int)lv_testTexture.m_extent.width, .y = (int)lv_testTexture.m_extent.height, .z = 1} };
 		std::array<VkOffset3D, 2> lv_dstRegion{ VkOffset3D{}, VkOffset3D{.x = (int)lv_swapchainExtent.width, .y = (int)lv_swapchainExtent.height, .z = 1} };
 		BlitsCopySrcToDestImage(l_cmd, lv_testTexture.m_image, m_vulkanSwapchain.m_images[l_swapchainIndex], VK_IMAGE_ASPECT_COLOR_BIT, lv_srcRegion, lv_dstRegion);
 
@@ -300,6 +302,8 @@ namespace VRenderer
 
 	void Renderer::InitializeVulkanFoundationalElementsAndGraphicsQueue(SDL_Window* l_window)
 	{
+		VULKAN_CHECK(volkInitialize());
+
 		vkb::InstanceBuilder lv_vkInstanceBuilder{};
 		auto lv_instanceContainer = lv_vkInstanceBuilder.set_app_name("VRenderer")
 			.request_validation_layers(true)
@@ -316,7 +320,9 @@ namespace VRenderer
 		m_vulkanFoundational.m_instance = lv_vkbInstance.instance;
 		m_vulkanFoundational.m_debugMsger = lv_vkbInstance.debug_messenger;
 
-		SDL_Vulkan_CreateSurface(l_window, m_vulkanFoundational.m_instance, nullptr,&m_vulkanFoundational.m_surface);
+		volkLoadInstance(lv_vkbInstance.instance);
+
+		SDL_Vulkan_CreateSurface(l_window, m_vulkanFoundational.m_instance, nullptr, &m_vulkanFoundational.m_surface);
 
 		VkPhysicalDeviceVulkan13Features lv_features13{ .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES };
 		lv_features13.dynamicRendering = true;
@@ -342,12 +348,10 @@ namespace VRenderer
 
 		m_device = lv_vkbDevice.device;
 
+		volkLoadDevice(m_device);
+
 		m_vulkanQueue.m_queue = lv_vkbDevice.get_queue(vkb::QueueType::graphics).value();
 		m_vulkanQueue.m_familyIndex.m_familyIndex = lv_vkbDevice.get_queue_index(vkb::QueueType::graphics).value();
-
-		volkInitialize();
-		volkLoadInstance(m_vulkanFoundational.m_instance);
-		volkLoadDevice(m_device);
 
 	}
 
@@ -385,9 +389,9 @@ namespace VRenderer
 		VkSemaphoreCreateInfo lv_semaphoreCreateInfo{};
 		lv_semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		lv_semaphoreCreateInfo.pNext = nullptr;
-		
+
 		for (auto& l_synPrimitives : m_swapchainPresentSyncPrimitives) {
-			
+
 			VULKAN_CHECK(vkCreateFence(m_device, &lv_fenceCreateInfo, nullptr, &l_synPrimitives.m_fence));
 			VULKAN_CHECK(vkCreateSemaphore(m_device, &lv_semaphoreCreateInfo, nullptr, &l_synPrimitives.m_acquireImageSemaphore));
 			VULKAN_CHECK(vkCreateSemaphore(m_device, &lv_semaphoreCreateInfo, nullptr, &l_synPrimitives.m_presentSemaphore));
@@ -395,13 +399,19 @@ namespace VRenderer
 	}
 
 	void Renderer::InitializeVmaAllocator()
-	{
+	{		
 		VmaAllocatorCreateInfo lv_vmaCreateInfo{};
 		lv_vmaCreateInfo.device = m_device;
 		lv_vmaCreateInfo.physicalDevice = m_vulkanFoundational.m_physicalDevice;
 		lv_vmaCreateInfo.vulkanApiVersion = VK_API_VERSION_1_3;
 		lv_vmaCreateInfo.instance = m_vulkanFoundational.m_instance;
 		lv_vmaCreateInfo.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;
+
+		VmaVulkanFunctions lv_functions{};
+
+		VULKAN_CHECK(vmaImportVulkanFunctionsFromVolk(&lv_vmaCreateInfo, &lv_functions));
+
+		lv_vmaCreateInfo.pVulkanFunctions = &lv_functions;
 
 		VULKAN_CHECK(vmaCreateAllocator(&lv_vmaCreateInfo, &m_vmaAlloc));
 	}
@@ -424,7 +434,7 @@ namespace VRenderer
 		auto& lv_cmdBuffer = GetCurrentFrameGraphicsCmdBuffer();
 
 		lv_cmdBuffer.BeginRecording();
-		
+
 		for (auto& lv_swapchainImage : m_vulkanSwapchain.m_images) {
 
 			VkImageSubresourceRange lv_subRange{};
@@ -464,7 +474,7 @@ namespace VRenderer
 		lv_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR;
 		lv_submitInfo.commandBufferInfoCount = 1;
 		lv_submitInfo.pCommandBufferInfos = &lv_cmdSubmitInfo;
-		
+
 		VULKAN_CHECK(vkQueueSubmit2(m_vulkanQueue.m_queue, 1, &lv_submitInfo, VK_NULL_HANDLE));
 
 		VULKAN_CHECK(vkQueueWaitIdle(m_vulkanQueue.m_queue));

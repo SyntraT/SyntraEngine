@@ -2,7 +2,7 @@
 
 
 #include "Syngine/engine/RenderBackends/Vulkan/SDL_WindowWrapper.hpp"
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 namespace VRenderer
 {
