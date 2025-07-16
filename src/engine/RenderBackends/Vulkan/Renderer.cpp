@@ -9,8 +9,10 @@
 #include <cmath>
 #include <limits>
 #include <VkBootstrap.h>
-#include <SDL_vulkan.h>
-#include <SDL_log.h>
+#include <SDL3/SDL_vulkan.h>
+#include <SDL3/SDL_log.h>
+#include <volk.h>
+
 
 namespace VRenderer
 {
@@ -314,7 +316,7 @@ namespace VRenderer
 		m_vulkanFoundational.m_instance = lv_vkbInstance.instance;
 		m_vulkanFoundational.m_debugMsger = lv_vkbInstance.debug_messenger;
 
-		SDL_Vulkan_CreateSurface(l_window, m_vulkanFoundational.m_instance, &m_vulkanFoundational.m_surface);
+		SDL_Vulkan_CreateSurface(l_window, m_vulkanFoundational.m_instance, nullptr,&m_vulkanFoundational.m_surface);
 
 		VkPhysicalDeviceVulkan13Features lv_features13{ .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES };
 		lv_features13.dynamicRendering = true;
@@ -342,6 +344,11 @@ namespace VRenderer
 
 		m_vulkanQueue.m_queue = lv_vkbDevice.get_queue(vkb::QueueType::graphics).value();
 		m_vulkanQueue.m_familyIndex.m_familyIndex = lv_vkbDevice.get_queue_index(vkb::QueueType::graphics).value();
+
+		volkInitialize();
+		volkLoadInstance(m_vulkanFoundational.m_instance);
+		volkLoadDevice(m_device);
+
 	}
 
 	void Renderer::InitializeVulkanSwapchain(SDL_Window* l_window)
