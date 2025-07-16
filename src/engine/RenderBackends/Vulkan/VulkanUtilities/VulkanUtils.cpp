@@ -1,9 +1,8 @@
 
 
 
-
-#include "include/VulkanUtils/VulkanUtils.hpp"
-#include "include/VulkanError.hpp"
+#include "Syngine/engine/RenderBackends/Vulkan/VulkanUtilities/VulkanUtils.hpp"
+#include "Syngine/engine/RenderBackends/Vulkan/VulkanError.hpp"
 #include <fstream>
 #include <vector>
 
@@ -133,7 +132,7 @@ namespace VRenderer
 			lv_viewCreateInfo.subresourceRange.baseMipLevel = l_baseMipLevel;
 			lv_viewCreateInfo.subresourceRange.layerCount = l_layerCount;
 			lv_viewCreateInfo.subresourceRange.levelCount = l_levelCount;
-			
+
 			VkImageView lv_view{};
 			VULKAN_CHECK(vkCreateImageView(l_device, &lv_viewCreateInfo, nullptr, &lv_view));
 
@@ -164,8 +163,8 @@ namespace VRenderer
 
 			lv_compiledShaderFile.read((char*)lv_bufferChar.data(), lv_fileSize);
 			lv_compiledShaderFile.close();
-			
-			memcpy(lv_buffer.data(), lv_bufferChar.data(), lv_buffer.size()*sizeof(uint32_t));
+
+			memcpy(lv_buffer.data(), lv_bufferChar.data(), lv_buffer.size() * sizeof(uint32_t));
 
 			VkShaderModuleCreateInfo lv_createInfo{};
 			lv_createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -176,7 +175,7 @@ namespace VRenderer
 			VULKAN_CHECK(vkCreateShaderModule(l_device, &lv_createInfo, nullptr, &lv_shaderModule));
 
 			return lv_shaderModule;
-			
+
 		}
 
 
@@ -188,7 +187,7 @@ namespace VRenderer
 			lv_createInfo.setLayoutCount = l_setLayoutCounts;
 			lv_createInfo.pPushConstantRanges = l_pushConstRanges.data();
 			lv_createInfo.pushConstantRangeCount = l_pushConstRangeCount;
-			
+
 			VkPipelineLayout lv_pipelineLayout{};
 			VULKAN_CHECK(vkCreatePipelineLayout(l_device, &lv_createInfo, nullptr, &lv_pipelineLayout));
 
@@ -232,7 +231,7 @@ namespace VRenderer
 			lv_imageBlit2.dstSubresource.baseArrayLayer = l_dstBaseLayer;
 			lv_imageBlit2.dstSubresource.layerCount = l_srcLayerCount;
 			lv_imageBlit2.dstSubresource.mipLevel = l_dstMipLevel;
-			
+
 			VkBlitImageInfo2 lv_blitImageInfo{};
 			lv_blitImageInfo.sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2;
 			lv_blitImageInfo.srcImage = l_srcImage;
@@ -242,7 +241,7 @@ namespace VRenderer
 			lv_blitImageInfo.filter = VK_FILTER_LINEAR;
 			lv_blitImageInfo.srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 			lv_blitImageInfo.dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			
+
 			vkCmdBlitImage2(l_cmd, &lv_blitImageInfo);
 		}
 	}

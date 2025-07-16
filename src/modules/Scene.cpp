@@ -1,5 +1,5 @@
 #include "Syngine/modules/Scene.hpp"
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
 #include "Syngine/Syngine.hpp"
 #include "Syngine/engine/RenderTable.hpp"
 #include "Syngine/modules/ShadowMapper.hpp"

@@ -2,7 +2,6 @@
 
 
 
-
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanResourceManager.hpp"
 #include <cassert>
 
@@ -12,7 +11,7 @@ namespace VRenderer
 	uint32_t VulkanResourceManager::AddVulkanTexture(std::string&& l_name, VulkanTexture&& l_vulkanTexture)
 	{
 		m_vulkanTextures.emplace_back(std::move(l_vulkanTexture));
-		const size_t lv_index = m_vulkanTextures.size()-1U;
+		const size_t lv_index = m_vulkanTextures.size() - 1U;
 		m_mapVulkanTextureNamesToIndex.emplace(std::move(l_name), lv_index);
 
 		return static_cast<uint32_t>(lv_index);
@@ -21,7 +20,7 @@ namespace VRenderer
 	uint32_t VulkanResourceManager::AddVulkanImageView(std::string&& l_name, VkImageView l_vulkanImageView)
 	{
 		m_vulkanImageViews.push_back(l_vulkanImageView);
-		const size_t lv_index = m_vulkanImageViews.size()-1U;
+		const size_t lv_index = m_vulkanImageViews.size() - 1U;
 		m_mapVulkanImageViewsNamesToIndex.emplace(std::move(l_name), lv_index);
 		return static_cast<uint32_t>(lv_index);
 	}
@@ -60,7 +59,7 @@ namespace VRenderer
 		if (m_mapVulkanTextureNamesToIndex.end() != lv_iter) {
 			return m_vulkanTextures[lv_iter->second];
 		}
-		
+
 		throw "Requested VulkanTexture was not found in the vulkan resource manager.\n";
 	}
 

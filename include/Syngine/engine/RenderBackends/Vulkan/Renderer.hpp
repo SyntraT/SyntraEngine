@@ -8,7 +8,6 @@
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanResourceManager.hpp"
 #include "Syngine/engine/RenderBackends/Vulkan/VulkanDescriptorSetAllocator.hpp"
 #include <vma/vk_mem_alloc.h>
-#include <array>
 
 struct SDL_Window;
 
@@ -17,7 +16,7 @@ namespace VRenderer
 	class Renderer final
 	{
 	public:
-		
+
 		VulkanCommandbufferReset& GetCurrentFrameGraphicsCmdBuffer();
 		VulkanSwapchainAndPresentSync& GetCurrentFrameSwapchainPresentSyncPrimitives();
 		uint32_t GetCurrentFrameInflightIndex() const;
@@ -42,7 +41,7 @@ namespace VRenderer
 		void InitializeDescriptorSetPool();
 
 	public:
-		
+
 		VulkanFoundationalElements m_vulkanFoundational{};
 		VulkanSwapchain m_vulkanSwapchain{};
 		VulkanQueueGraphics m_vulkanQueue{};

@@ -2,11 +2,14 @@
 
 
 #include <fmt/core.h>
-#include <vulkan/vk_enum_string_helper.h>
+#include <volk.h>
 
 
 namespace VRenderer
 {
+
+
+    const char* string_VkResult(VkResult input_value);
 
 #define VULKAN_CHECK(x)                                                     \
         {\
@@ -15,5 +18,8 @@ namespace VRenderer
                 fmt::print("Detected Vulkan error at line: {0}\nFile: {1}\nVulkan Error: {2}\n", __LINE__, __FILE__, string_VkResult(err)); \
                 throw "Vulkan error occured. Aborting by throwing exception.";                                                    \
         }\
-    }
+        }
 }
+
+  
+    

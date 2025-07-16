@@ -1,3 +1,34 @@
+
+
+//For now if you want to work with the opengl as rendering backend comment this out
+#define VULKAN_RENDERER 1
+
+
+
+
+
+
+
+#if defined(VULKAN_RENDERER)
+
+#include "Syngine/engine/RenderBackends/Vulkan/Renderer.hpp"
+#include "Syngine/engine/RenderBackends/Vulkan/SDL_WindowWrapper.hpp"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
+#include <memory>
+#include <iostream>
+#include <chrono>
+#include <thread>
+
+#endif
+
+
+
+
+
+
+
+#ifndef VULKAN_RENDERER
 #include <Syngine/Syngine.hpp>
 #include <Syngine/modules/Camera.hpp>
 #include <Syngine/modules/Model.hpp>
@@ -6,8 +37,7 @@
 #include <Syngine/world/entity/EntityConvexHull.hpp>
 #include <Syngine/world/entity/EntityTriangleMeshCompound.hpp>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -31,6 +61,13 @@
 #include "imgui.h"
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+
+#endif
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#ifndef VULKAN_RENDERER
 
 float moveAccel = 2.0f;
 
@@ -319,7 +356,73 @@ void onExit() {
     ImGui::DestroyContext();
 }
 
+#endif
+
+
+
+
+
+
+
+#ifdef VULKAN_RENDERER
+
+int InitializeSDL()
+{
+    if (false == SDL_SetAppMetadata("VRenderer", "V1", nullptr)) {
+        SDL_Log("SDL_SetAppMetaData failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    if (false == SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("SDL_Init failed: %s", SDL_GetError());
+        return -1;
+    }
+
+    return 0;
+}
+
+SDL_Window* InitializeVulkanFullScreenBorderlessWindow()
+{
+    SDL_Window* lv_window{};
+
+    int lv_totalNumDisplays{};
+    const SDL_DisplayID* lv_displayIDs = SDL_GetDisplays(&lv_totalNumDisplays);
+    if (nullptr == lv_displayIDs) {
+        SDL_Log("SDL_GetDisplays failed: %s", SDL_GetError());
+        return nullptr;
+    }
+    const SDL_DisplayMode* lv_displayMode{};
+    if (0 < lv_totalNumDisplays) {
+        lv_displayMode = SDL_GetCurrentDisplayMode(lv_displayIDs[0]);
+        if (nullptr == lv_displayMode) {
+            SDL_Log("SDL_GetCurrentDisplayMode failed: %s", SDL_GetError());
+            return nullptr;
+        }
+    }
+    else {
+        SDL_Log("Total number of display IDs is 0. Aborting...");
+        return nullptr;
+    }
+
+    lv_window = SDL_CreateWindow("VRenderer", lv_displayMode[0].w, lv_displayMode[0].h, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_VULKAN);
+
+    if (nullptr == lv_window) {
+        SDL_Log("SDL_CreateWindow failed: %s", SDL_GetError());
+        return nullptr;
+    }
+
+    return lv_window;
+}
+
+#endif
+
+
+
+
 int main() {
+
+#ifndef VULKAN_RENDERER
+
     window = new GameWindow("Sample", 800, 600);
     window->withHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     window->addInitTask([](GameWindow *window){ 
@@ -340,4 +443,87 @@ int main() {
     int exitCode = window->initLoop();
     onExit();
     return exitCode;
+
+#endif 
+
+
+
+
+
+
+
+#ifdef VULKAN_RENDERER
+
+    VRenderer::SDL_WindowWrapper lv_window{};
+    std::unique_ptr<VRenderer::Renderer> lv_renderer = std::make_unique<VRenderer::Renderer>();;
+
+    try {
+
+        const int lv_result = InitializeSDL();
+        if (-1 == lv_result) {
+            return -1;
+        }
+
+        lv_window.m_window = InitializeVulkanFullScreenBorderlessWindow();
+        if (nullptr == lv_window.m_window) {
+            return -1;
+        }
+
+        lv_renderer->Init(lv_window.m_window);
+
+        SDL_Event lv_event{};
+        SDL_WindowFlags lv_windowFlags{};
+        bool lv_quit{ false };
+        bool lv_windowMinimized{ false };
+
+        while (false == lv_quit) {
+
+            while (true == SDL_PollEvent(&lv_event)) {
+
+                if (SDL_EVENT_KEY_DOWN == lv_event.type) {
+
+                    if (SDL_SCANCODE_Q == lv_event.key.scancode) {
+                        lv_quit = true;
+                    }
+
+                }
+
+                if (SDL_EVENT_WINDOW_CLOSE_REQUESTED == lv_event.type) {
+                    lv_quit = true;
+                }
+
+            }
+
+            lv_windowFlags = SDL_GetWindowFlags(lv_window.m_window);
+
+            if (0 != (SDL_WINDOW_MINIMIZED & lv_windowFlags)) {
+                lv_windowMinimized = true;
+            }
+            else {
+                lv_windowMinimized = false;
+            }
+
+            if (true == lv_windowMinimized) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(150));
+                continue;
+            }
+
+            lv_renderer->Draw();
+        }
+
+    }
+    catch (const char* l_error) {
+        std::cerr << l_error << std::endl;
+    }
+
+    try {
+        lv_renderer->InitCleanUp();
+    }
+    catch (const char* l_error) {
+        std::cerr << l_error << std::endl;
+    }
+
+    return 0;
+#endif
+
 }
