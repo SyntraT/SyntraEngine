@@ -38,7 +38,7 @@ namespace VRenderer
 	{
 		InitializeVulkanFoundationalElementsAndGraphicsQueue(l_window);
 		InitializeVulkanSwapchain(l_window);
-		InitializeVulkanGraphicsCommandbuffers();
+		InitializeVulkanGraphicsCommandPoolAndbuffers();
 		InitializeVulkanSwapchainAndPresentSyncPrimitives();
 		InitializeVmaAllocator();
 		TransitionImageLayoutSwapchainImagesToPresentUponCreation();
@@ -246,7 +246,7 @@ namespace VRenderer
 	}
 
 
-	void Renderer::InitializeVulkanGraphicsCommandbuffers()
+	void Renderer::InitializeVulkanGraphicsCommandPoolAndbuffers()
 	{
 		VkCommandPoolCreateInfo lv_cmdPoolCreateInfo{};
 		lv_cmdPoolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -254,15 +254,15 @@ namespace VRenderer
 		lv_cmdPoolCreateInfo.queueFamilyIndex = m_vulkanQueue.m_familyIndex.m_familyIndex;
 		lv_cmdPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-		for (auto& l_vulkanGraphicsCmdBuffer : m_vulkanGraphicsCmdBuffers) {
+		VULKAN_CHECK(vkCreateCommandPool(m_device, &lv_cmdPoolCreateInfo, nullptr, &m_thisThreadMainPrimaryCmdPool));
 
-			VULKAN_CHECK(vkCreateCommandPool(m_device, &lv_cmdPoolCreateInfo, nullptr, &l_vulkanGraphicsCmdBuffer.m_pool));
+		for (auto& l_vulkanGraphicsCmdBuffer : m_vulkanGraphicsCmdBuffers) {
 
 			VkCommandBufferAllocateInfo lv_cmdBufferAllocateInfo{};
 			lv_cmdBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 			lv_cmdBufferAllocateInfo.pNext = nullptr;
 			lv_cmdBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			lv_cmdBufferAllocateInfo.commandPool = l_vulkanGraphicsCmdBuffer.m_pool;
+			lv_cmdBufferAllocateInfo.commandPool = m_thisThreadMainPrimaryCmdPool;
 			lv_cmdBufferAllocateInfo.commandBufferCount = 1;
 
 			VULKAN_CHECK(vkAllocateCommandBuffers(m_device, &lv_cmdBufferAllocateInfo, &l_vulkanGraphicsCmdBuffer.m_buffer));
@@ -290,8 +290,11 @@ namespace VRenderer
 		}
 
 		for (auto& l_cmdBuffer : m_vulkanGraphicsCmdBuffers) {
-			l_cmdBuffer.CleanUp(m_device);
+			l_cmdBuffer.CleanUp(m_device, m_thisThreadMainPrimaryCmdPool);
 		}
+
+		vkDestroyCommandPool(m_device, m_thisThreadMainPrimaryCmdPool, nullptr);
+
 		m_vulkanSwapchain.CleanUp(m_device);
 		if (VK_NULL_HANDLE != m_device) {
 			vkDestroyDevice(m_device, nullptr);

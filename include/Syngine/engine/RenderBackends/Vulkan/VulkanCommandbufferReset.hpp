@@ -14,7 +14,7 @@ namespace VRenderer
 	{
 	public:
 
-		void CleanUp(VkDevice l_device) noexcept;
+		void CleanUp(VkDevice l_device, VkCommandPool l_thisThreadPrimaryCmdPool) noexcept;
 
 		void ResetBuffer();
 
@@ -22,7 +22,6 @@ namespace VRenderer
 		void EndRecording();
 
 	public:
-		VkCommandPool m_pool{};
 		VkCommandBuffer m_buffer{};
 	};
 

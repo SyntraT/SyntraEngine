@@ -34,7 +34,7 @@ namespace VRenderer
 
 		void InitializeVulkanFoundationalElementsAndGraphicsQueue(SDL_Window* l_window);
 		void InitializeVulkanSwapchain(SDL_Window* l_window);
-		void InitializeVulkanGraphicsCommandbuffers();
+		void InitializeVulkanGraphicsCommandPoolAndbuffers();
 		void InitializeVulkanSwapchainAndPresentSyncPrimitives();
 		void TransitionImageLayoutSwapchainImagesToPresentUponCreation();
 		void InitializeVmaAllocator();
@@ -49,6 +49,7 @@ namespace VRenderer
 		VmaAllocator m_vmaAlloc{};
 		VulkanResourceManager m_vulkanResManager{};
 		VulkanDescriptorSetAllocator m_mainDescriptorSetAlloc{};
+		VkCommandPool m_thisThreadMainPrimaryCmdPool{};
 
 	private:
 		static constexpr uint32_t m_maxCommandBuffers{ 2U };
